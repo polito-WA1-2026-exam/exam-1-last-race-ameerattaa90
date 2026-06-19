@@ -115,6 +115,89 @@ function isLoggedIn(req, res, next) {
   return res.status(401).json({ error: "Not authenticated" });
 }
 
+/*-----------------------------------------------------------------------------*/
+/*               HELPER FUNCTIONS TO CREATE A GAME                                                                */
+/*-----------------------------------------------------------------------------*/
+
+
+function buildAdjacencyList(stations, segments) {
+  const adjacency = new Map();
+
+  for (const station of stations) {
+    adjacency.set(station.id, []);
+  }
+
+  for (const segment of segments) {
+    adjacency.get(segment.station1_id).push(segment.station2_id);
+    adjacency.get(segment.station2_id).push(segment.station1_id);
+  }
+
+  return adjacency;
+}
+
+function shortestDistance(startStationId, destinationStationId, adjacency) {
+  const visited = new Set();
+  const queue = [{ stationId: startStationId, distance: 0 }];
+
+  visited.add(startStationId);
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+
+    if (current.stationId === destinationStationId) {
+      return current.distance;
+    }
+
+    const neighbors = adjacency.get(current.stationId) || [];
+
+    for (const neighbor of neighbors) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push({
+          stationId: neighbor,
+          distance: current.distance + 1,
+        });
+      }
+    }
+  }
+
+  return Infinity;
+}
+
+async function selectRandomStartAndDestination() {
+  const stations = await dao.getStations();
+  const segments = await dao.getAllSegmentsWithLines();
+
+  const adjacency = buildAdjacencyList(stations, segments);
+
+  const validPairs = [];
+
+  for (const start of stations) {
+    for (const destination of stations) {
+      if (start.id !== destination.id) {
+        const distance = shortestDistance(start.id, destination.id, adjacency);
+
+        if (distance >= 3 && distance !== Infinity) {
+          validPairs.push({
+            startStationId: start.id,
+            destinationStationId: destination.id,
+          });
+        }
+      }
+    }
+  }
+
+  if (validPairs.length === 0) {
+    throw new Error("No valid start/destination pairs found");
+  }
+
+  const randomIndex = Math.floor(Math.random() * validPairs.length);
+  return validPairs[randomIndex];
+}
+
+
+/*-------------------------------------------------------------------------------*/
+
 /* -------------------------------------------------------------------------- */
 /* BASIC TEST API                                                             */
 /* -------------------------------------------------------------------------- */
@@ -191,6 +274,30 @@ app.get("/api/network/planning", isLoggedIn, async (req, res) => {
     res.json(network);
   } catch (err) {
     console.error("Error loading planning network:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+/* -------------------------------------------------------------------------- */
+/* GAME APIs                                                                  */
+/* -------------------------------------------------------------------------- */
+
+app.post("/api/games", isLoggedIn, async (req, res) => {
+  try {
+    const { startStationId, destinationStationId } =
+      await selectRandomStartAndDestination();
+
+    const gameId = await dao.createGame(
+      req.user.id,
+      startStationId,
+      destinationStationId
+    );
+
+    const game = await dao.getGameById(gameId);
+
+    res.status(201).json(game);
+  } catch (err) {
+    console.error("Error creating game:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
