@@ -207,6 +207,130 @@ function parsePositiveInteger(value) {
   return number;
 }
 
+function isPositiveIntegerArray(values) {
+  return (
+    Array.isArray(values) &&
+    values.length > 0 &&
+    values.every((value) => Number.isInteger(value) && value > 0)
+  );
+}
+
+async function validateSubmittedRoute(game, submittedSegmentIds) {
+  const repeatedSegments = new Set();
+
+  for (const segmentId of submittedSegmentIds) {
+    if (repeatedSegments.has(segmentId)) {
+      return {
+        valid: false,
+        reason: "The same segment cannot be used more than once",
+      };
+    }
+
+    repeatedSegments.add(segmentId);
+  }
+
+  const allSegments = await dao.getAllSegmentsWithLines();
+  const segmentById = new Map();
+
+  for (const segment of allSegments) {
+    segmentById.set(segment.id, segment);
+  }
+
+  let currentStationId = game.start_station_id;
+  let previousLineId = null;
+  const orderedSteps = [];
+
+  for (const segmentId of submittedSegmentIds) {
+    const segment = segmentById.get(segmentId);
+
+    if (!segment) {
+      return {
+        valid: false,
+        reason: `Segment ${segmentId} does not exist`,
+      };
+    }
+
+    const startsFromCurrentStation =
+      segment.station1_id === currentStationId ||
+      segment.station2_id === currentStationId;
+
+    if (!startsFromCurrentStation) {
+      return {
+        valid: false,
+        reason: "The selected segments are not connected in sequence",
+      };
+    }
+
+    if (previousLineId !== null && previousLineId !== segment.line_id) {
+      const isInterchange = await dao.isInterchangeStation(currentStationId);
+
+      if (!isInterchange) {
+        return {
+          valid: false,
+          reason: "Line changes are allowed only at interchange stations",
+        };
+      }
+    }
+
+    const nextStationId =
+      segment.station1_id === currentStationId
+        ? segment.station2_id
+        : segment.station1_id;
+
+    orderedSteps.push({
+      fromStationId: currentStationId,
+      toStationId: nextStationId,
+      lineId: segment.line_id,
+    });
+
+    currentStationId = nextStationId;
+    previousLineId = segment.line_id;
+  }
+
+  if (currentStationId !== game.destination_station_id) {
+    return {
+      valid: false,
+      reason: "The route does not end at the assigned destination station",
+    };
+  }
+
+  return {
+    valid: true,
+    orderedSteps,
+  };
+}
+
+async function executeValidRoute(gameId, orderedSteps) {
+  let coins = 20;
+
+  for (let i = 0; i < orderedSteps.length; i++) {
+    const step = orderedSteps[i];
+    const event = await dao.getRandomEvent();
+
+    coins += event.effect;
+
+    await dao.saveGameStep(
+      gameId,
+      i + 1,
+      step.fromStationId,
+      step.toStationId,
+      step.lineId,
+      event.id,
+      coins
+    );
+  }
+
+  const finalScore = Math.max(0, coins);
+
+  await dao.updateGameResult(gameId, finalScore, "completed");
+
+  const savedSteps = await dao.getGameSteps(gameId);
+
+  return {
+    finalScore,
+    steps: savedSteps,
+  };
+}
 
 /*-------------------------------------------------------------------------------*/
 
@@ -361,6 +485,67 @@ app.get("/api/games/:id/planning", isLoggedIn, async (req, res) => {
   }
 });
 
+app.post("/api/games/:id/route", isLoggedIn, async (req, res) => {
+  try {
+    const gameId = parsePositiveInteger(req.params.id);
+
+    if (!gameId) {
+      return res.status(400).json({ error: "Invalid game id" });
+    }
+
+    const game = await dao.getGameById(gameId);
+
+    if (!game) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    if (game.user_id !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    if (game.status !== "planning") {
+      return res.status(409).json({ error: "Game is not in planning phase" });
+    }
+
+    const submittedSegmentIds = req.body.segments;
+
+    if (!isPositiveIntegerArray(submittedSegmentIds)) {
+      return res.status(400).json({
+        error: "The request body must contain a non-empty array of segment ids",
+      });
+    }
+
+    const validation = await validateSubmittedRoute(game, submittedSegmentIds);
+
+    if (!validation.valid) {
+      await dao.updateGameResult(gameId, 0, "failed");
+
+      return res.json({
+        valid: false,
+        reason: validation.reason,
+        final_score: 0,
+        status: "failed",
+        steps: [],
+      });
+    }
+
+    const execution = await executeValidRoute(gameId, validation.orderedSteps);
+    const updatedGame = await dao.getGameById(gameId);
+
+    res.json({
+      valid: true,
+      game: {
+        id: updatedGame.id,
+        status: updatedGame.status,
+        final_score: updatedGame.final_score,
+      },
+      steps: execution.steps,
+    });
+  } catch (err) {
+    console.error("Error submitting route:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 /* -------------------------------------------------------------------------- */
