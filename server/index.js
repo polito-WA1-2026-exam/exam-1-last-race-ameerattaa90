@@ -196,6 +196,18 @@ async function selectRandomStartAndDestination() {
 }
 
 
+
+function parsePositiveInteger(value) {
+  const number = Number(value);
+
+  if (!Number.isInteger(number) || number <= 0) {
+    return null;
+  }
+
+  return number;
+}
+
+
 /*-------------------------------------------------------------------------------*/
 
 /* -------------------------------------------------------------------------- */
@@ -301,6 +313,55 @@ app.post("/api/games", isLoggedIn, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+app.get("/api/games/:id/planning", isLoggedIn, async (req, res) => {
+  try {
+    const gameId = parsePositiveInteger(req.params.id);
+
+    if (!gameId) {
+      return res.status(400).json({ error: "Invalid game id" });
+    }
+
+    const game = await dao.getGameById(gameId);
+
+    if (!game) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    if (game.user_id !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    if (game.status !== "planning") {
+      return res.status(409).json({ error: "Game is not in planning phase" });
+    }
+
+    const planningNetwork = await dao.getPlanningNetwork();
+
+    res.json({
+      game: {
+        id: game.id,
+        start_station: {
+          id: game.start_station_id,
+          name: game.start_station_name,
+        },
+        destination_station: {
+          id: game.destination_station_id,
+          name: game.destination_station_name,
+        },
+        initial_coins: game.initial_coins,
+        status: game.status,
+      },
+      network: planningNetwork,
+    });
+  } catch (err) {
+    console.error("Error loading planning data:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 /* -------------------------------------------------------------------------- */
 /* RANKING API                                                                */
