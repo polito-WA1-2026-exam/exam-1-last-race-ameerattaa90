@@ -548,6 +548,57 @@ app.post("/api/games/:id/route", isLoggedIn, async (req, res) => {
 });
 
 
+//////////////////////////////////////////////////////////////////////////
+
+app.get("/api/games/:id/result", isLoggedIn, async (req, res) => {
+  try {
+    const gameId = parsePositiveInteger(req.params.id);
+
+    if (!gameId) {
+      return res.status(400).json({ error: "Invalid game id" });
+    }
+
+    const game = await dao.getGameById(gameId);
+
+    if (!game) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    if (game.user_id !== req.user.id) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    if (game.status !== "completed" && game.status !== "failed") {
+      return res.status(409).json({ error: "Game has not finished yet" });
+    }
+
+    const steps = await dao.getGameSteps(gameId);
+
+    res.json({
+      game: {
+        id: game.id,
+        status: game.status,
+        start_station: {
+          id: game.start_station_id,
+          name: game.start_station_name,
+        },
+        destination_station: {
+          id: game.destination_station_id,
+          name: game.destination_station_name,
+        },
+        final_score: game.final_score,
+        created_at: game.created_at,
+        completed_at: game.completed_at,
+      },
+      steps,
+    });
+  } catch (err) {
+    console.error("Error loading game result:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 /* -------------------------------------------------------------------------- */
 /* RANKING API                                                                */
 /* -------------------------------------------------------------------------- */
