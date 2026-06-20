@@ -1,6 +1,7 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { useUser } from "./contexts/UserContext.jsx";
 import LoginForm from "./components/LoginForm.jsx";
+import RankingPage from "./components/RankingPage.jsx";
 
 function HomePage() {
   const { loggedIn } = useUser();
@@ -78,14 +79,14 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginForm />} />
 
-        <Route
-          path="/ranking"
-          element={
-            <ProtectedRoute>
-              <RankingPlaceholder />
-            </ProtectedRoute>
-          }
-        />
+       <Route
+         path="/ranking"
+         element={
+         <ProtectedRoute>
+         <RankingPage />
+        </ProtectedRoute>
+         }
+       />
       </Routes>
     </>
   );
