@@ -2,6 +2,7 @@ import { Link, Navigate, Route, Routes } from "react-router-dom";
 import { useUser } from "./contexts/UserContext.jsx";
 import LoginForm from "./components/LoginForm.jsx";
 import RankingPage from "./components/RankingPage.jsx";
+import SetupPage from "./components/SetupPage.jsx";
 
 function HomePage() {
   const { loggedIn } = useUser();
@@ -50,6 +51,7 @@ function NavigationBar() {
 
       {loggedIn ? (
         <>
+          <Link to="/setup">Setup</Link>{" | "}
           <Link to="/ranking">Ranking</Link>{" | "}
           <span>{user.name}</span>{" "}
           <button onClick={handleLogout}>Logout</button>
@@ -87,6 +89,16 @@ function App() {
         </ProtectedRoute>
          }
        />
+
+            <Route
+              path="/setup"
+             element={
+           <ProtectedRoute>
+            <SetupPage />
+          </ProtectedRoute>
+            }
+           />
+           
       </Routes>
     </>
   );
