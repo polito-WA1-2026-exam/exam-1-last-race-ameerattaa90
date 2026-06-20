@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../API.js";
+import MetroMap from "./MetroMap.jsx";
 
 function SetupPage() {
   const navigate = useNavigate();
@@ -58,23 +59,7 @@ function SetupPage() {
 
         {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-        {network && (
-          <div className="network-lines">
-            {network.lines.map((line) => (
-              <section key={line.id} className="line-card">
-                <h2>{line.name}</h2>
-
-                <ol className="station-list">
-                  {line.stations.map((station) => (
-                    <li key={`${line.id}-${station.id}`}>
-                      {station.name}
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            ))}
-          </div>
-        )}
+       {network && <MetroMap network={network} />}
 
         <button
           className="primary-button"

@@ -147,20 +147,20 @@ async function init() {
     );
   }
 
-  const stations = [
-    'Centrale',
-    'Porta Velaria',
-    'Crocevia del Falco',
-    'Piazza delle Lanterne',
-    'Fontana Oscura',
-    'Borgo Sereno',
-    'Viale dei Mosaici',
-    'Torre Cinerea',
-    "Campo dell'Eco",
-    'Mercato Nord',
-    "Museo dell'Alba",
-    'Giardini Sud'
-  ];
+ const stations = [
+  "Stazione Centrale",
+  "Porta Nuova",
+  "Piazza Castello",
+  "Mole Antonelliana",
+  "Lingotto",
+  "Parco Valentino",
+  "Politecnico",
+  "Porta Susa",
+  "Re Umberto",
+  "Mercato Centrale",
+  "Museo Egizio",
+  "Giardini Reali"
+];
 
   for (const station of stations) {
     await run('INSERT INTO stations (name) VALUES (?)', [station]);

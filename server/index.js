@@ -210,7 +210,7 @@ function parsePositiveInteger(value) {
 function isPositiveIntegerArray(values) {
   return (
     Array.isArray(values) &&
-    values.length > 0 &&
+   // values.length > 0 &&
     values.every((value) => Number.isInteger(value) && value > 0)
   );
 }
@@ -511,7 +511,7 @@ app.post("/api/games/:id/route", isLoggedIn, async (req, res) => {
 
     if (!isPositiveIntegerArray(submittedSegmentIds)) {
       return res.status(400).json({
-        error: "The request body must contain a non-empty array of segment ids",
+        error: "The request body must contain an array of segment ids",
       });
     }
 

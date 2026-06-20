@@ -3,6 +3,8 @@ import { useUser } from "./contexts/UserContext.jsx";
 import LoginForm from "./components/LoginForm.jsx";
 import RankingPage from "./components/RankingPage.jsx";
 import SetupPage from "./components/SetupPage.jsx";
+import PlanningPage from "./components/PlanningPage.jsx";
+import ResultPage from "./components/ResultPage.jsx";
 
 function HomePage() {
   const { loggedIn } = useUser();
@@ -98,7 +100,25 @@ function App() {
           </ProtectedRoute>
             }
            />
-           
+
+              <Route
+               path="/games/:gameId/planning"
+               element={
+             <ProtectedRoute>
+             <PlanningPage />
+             </ProtectedRoute>          
+              }
+             />
+
+             <Route
+             path="/games/:gameId/result"
+             element={
+            <ProtectedRoute>
+            <ResultPage />
+           </ProtectedRoute>
+            }
+            />
+
       </Routes>
     </>
   );
