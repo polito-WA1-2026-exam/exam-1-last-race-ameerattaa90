@@ -415,3 +415,16 @@ nav button {
     flex-direction: column;
   }
 }
+
+.instructions-list {
+  text-align: left;
+  margin-top: 20px;
+}
+
+.instructions-list ol {
+  padding-left: 22px;
+}
+
+.instructions-list li {
+  margin-bottom: 8px;
+}

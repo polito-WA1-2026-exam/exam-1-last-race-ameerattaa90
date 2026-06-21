@@ -10,21 +10,50 @@ function HomePage() {
   const { loggedIn } = useUser();
 
   return (
-    <main>
-      <h1>Last Race</h1>
+    <main className="page-container">
+      <section className="card">
+        <h1>Last Race</h1>
 
-      <p>
-        Plan a route through the underground network before time runs out.
-      </p>
+        <p className="page-description">
+          Last Race is a single-player metro route planning game. The goal is to
+          reach the assigned destination station by building a valid route before
+          the timer expires.
+        </p>
 
-      {loggedIn ? (
-        <p>You are logged in. Game pages will be added next.</p>
-      ) : (
-        <p>Please log in to play.</p>
-      )}
+        <section className="instructions-list">
+          <h2>Game instructions</h2>
+
+          <ol>
+            <li>After login, open the setup phase and study the full metro network.</li>
+            <li>When you start a game, the server assigns a start station and a destination station.</li>
+            <li>During planning, you have 90 seconds to select metro segments and build your route.</li>
+            <li>Each segment can be selected only once.</li>
+            <li>The route must start from the assigned start station and end at the assigned destination.</li>
+            <li>If the route is invalid or incomplete, the final score is 0.</li>
+            <li>If the route is valid, random events are applied during execution and modify your coins.</li>
+            <li>The final score is the remaining number of coins. Negative scores are shown as 0.</li>
+          </ol>
+        </section>
+
+        {loggedIn ? (
+          <div className="button-row">
+            <a className="primary-button link-button" href="/setup">
+              Start from Setup
+            </a>
+            <a className="secondary-button link-button" href="/ranking">
+              View Ranking
+            </a>
+          </div>
+        ) : (
+          <p className="page-description">
+            Please log in to play. Anonymous users can only read the instructions.
+          </p>
+        )}
+      </section>
     </main>
   );
 }
+
 
 function ProtectedRoute(props) {
   const { loggedIn, checkingAuth } = useUser();
