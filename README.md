@@ -266,7 +266,7 @@ The backend protects private APIs using an `isLoggedIn` middleware.
 
 ### Ranking page
 
-![Ranking page](./screenshots/ranking.jpg)
+![Ranking page](./screenshots/Ranking.jpg)
 
 ## AI usage
 
