@@ -2,7 +2,6 @@
 
 ## Student: s351966 ALKUBAISI AMEER
 
-
 # Last Race
 
 Last Race is a single-player web application game based on a metro network.
@@ -253,7 +252,9 @@ The backend protects private APIs using an `isLoggedIn` middleware.
 
 ### Setup phase
 
-![Setup page](./screenshots/setup.jpg)
+
+<img src="./screenshots/setup.jpg" alt="Setup page" width="800">
+
 
 ### Planning phase
 
