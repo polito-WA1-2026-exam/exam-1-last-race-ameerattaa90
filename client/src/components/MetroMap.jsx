@@ -1,90 +1,90 @@
 function MetroMap({ network }) {
-  const stationPositions = {
+ const stationPositions = {
   "Stazione Centrale": {
-    x: 110,
-    y: 100,
-    labelX: 110,
-    labelY: 70,
+    x: 90,
+    y: 80,
+    labelX: 90,
+    labelY: 45,
     anchor: "middle",
   },
   "Porta Nuova": {
     x: 270,
-    y: 100,
+    y: 80,
     labelX: 270,
-    labelY: 70,
+    labelY: 45,
     anchor: "middle",
   },
   "Piazza Castello": {
-    x: 440,
-    y: 100,
-    labelX: 440,
-    labelY: 70,
+    x: 450,
+    y: 80,
+    labelX: 450,
+    labelY: 45,
     anchor: "middle",
   },
   "Mole Antonelliana": {
-    x: 610,
-    y: 100,
-    labelX: 610,
-    labelY: 70,
+    x: 630,
+    y: 80,
+    labelX: 630,
+    labelY: 45,
     anchor: "middle",
   },
   "Mercato Centrale": {
-   x: 610,
-  y: 360,
-  labelX: 610,
-  labelY: 340,
-  anchor: "middle",
+    x: 810,
+    y: 80,
+    labelX: 810,
+    labelY: 45,
+    anchor: "middle",
   },
 
   "Lingotto": {
     x: 270,
-    y: 230,
+    y: 220,
     labelX: 270,
-    labelY: 205,
+    labelY: 190,
     anchor: "middle",
   },
   "Parco Valentino": {
-    x: 440,
-    y: 230,
-    labelX: 440,
-    labelY: 205,
+    x: 450,
+    y: 220,
+    labelX: 450,
+    labelY: 190,
     anchor: "middle",
   },
   "Politecnico": {
-    x: 610,
-    y: 230,
-    labelX: 610,
-    labelY: 205,
+    x: 630,
+    y: 220,
+    labelX: 630,
+    labelY: 190,
     anchor: "middle",
   },
   "Museo Egizio": {
-    x: 760,
-    y: 230,
-    labelX: 760,
-    labelY: 205,
+    x: 810,
+    y: 220,
+    labelX: 810,
+    labelY: 190,
     anchor: "middle",
   },
 
   "Re Umberto": {
-     x: 390,
-  y: 360,
-  labelX: 390,
-  labelY: 340,
-  anchor: "middle",
+    x: 390,
+    y: 360,
+    labelX: 390,
+    labelY: 405,
+    anchor: "middle",
   },
   "Porta Susa": {
-    x: 540,
+    x: 630,
     y: 360,
-    labelX: 540,
-    labelY: 400,
+    labelX: 630,
+    labelY: 405,
     anchor: "middle",
   },
   "Giardini Reali": {
-   x: 760,
-  y: 360,
-  labelX: 760,
-  labelY: 340,
-  anchor: "middle",
+    x: 810,
+    y: 360,
+    labelX: 810,
+    labelY: 405,
+    anchor: "middle",
   },
 };
 
@@ -119,9 +119,9 @@ function MetroMap({ network }) {
   return (
     <div className="metro-map-wrapper">
     <svg
-  width="100%"
-  height="340"
- viewBox="40 55 790 320"
+    width="100%"
+  height="430"
+  viewBox="30 25 850 430"
   className="metro-map"
 >
         {network.lines.map((line) =>

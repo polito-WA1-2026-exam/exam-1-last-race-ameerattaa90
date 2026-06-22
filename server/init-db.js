@@ -198,11 +198,11 @@ async function init() {
     [3, 8, 3],
     [3, 9, 4],
 
-    // Yellow Line
-    [4, 4, 1],
-    [4, 8, 2],
-    [4, 7, 3],
-    [4, 12, 4]
+   // Yellow Line
+[4, 4, 1],
+[4, 7, 2],
+[4, 8, 3],
+[4, 12, 4]
   ];
 
   for (const [lineId, stationId, position] of lineStations) {
@@ -231,9 +231,9 @@ async function init() {
     [3, 8, 9],
 
     // Yellow Line
-    [4, 4, 8],
-    [4, 8, 7],
-    [4, 7, 12]
+[4, 4, 7],
+[4, 7, 8],
+[4, 8, 12]
   ];
 
   for (const [lineId, station1Id, station2Id] of segments) {
