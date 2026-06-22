@@ -6,8 +6,8 @@ function LoginForm() {
   const navigate = useNavigate();
   const { login } = useUser();
 
-  const [email, setEmail] = useState("alice@example.com");
-  const [password, setPassword] = useState("alicepwd");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   async function handleSubmit(event) {
