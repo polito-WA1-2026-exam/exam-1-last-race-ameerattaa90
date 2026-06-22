@@ -29,11 +29,11 @@ function MetroMap({ network }) {
     anchor: "middle",
   },
   "Mercato Centrale": {
-    x: 760,
-    y: 100,
-    labelX: 760,
-    labelY: 70,
-    anchor: "middle",
+   x: 610,
+  y: 360,
+  labelX: 610,
+  labelY: 340,
+  anchor: "middle",
   },
 
   "Lingotto": {
@@ -66,11 +66,11 @@ function MetroMap({ network }) {
   },
 
   "Re Umberto": {
-    x: 390,
-    y: 360,
-    labelX: 390,
-    labelY: 400,
-    anchor: "middle",
+     x: 390,
+  y: 360,
+  labelX: 390,
+  labelY: 340,
+  anchor: "middle",
   },
   "Porta Susa": {
     x: 540,
@@ -80,11 +80,11 @@ function MetroMap({ network }) {
     anchor: "middle",
   },
   "Giardini Reali": {
-    x: 760,
-    y: 360,
-    labelX: 760,
-    labelY: 400,
-    anchor: "middle",
+   x: 760,
+  y: 360,
+  labelX: 760,
+  labelY: 340,
+  anchor: "middle",
   },
 };
 
@@ -121,7 +121,7 @@ function MetroMap({ network }) {
     <svg
   width="100%"
   height="340"
-  viewBox="40 45 790 340"
+ viewBox="40 55 790 320"
   className="metro-map"
 >
         {network.lines.map((line) =>

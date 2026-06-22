@@ -94,15 +94,6 @@ function NavigationBar() {
   );
 }
 
-function RankingPlaceholder() {
-  return (
-    <main>
-      <h1>Ranking</h1>
-      <p>Ranking page will be implemented next.</p>
-    </main>
-  );
-}
-
 function App() {
   return (
     <>
